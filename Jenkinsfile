@@ -70,6 +70,7 @@ pipeline {
                     echo $KUBE_TOKEN > /tmp/token
                     kubectl --server=${CLUSTER_URL} \
                             --token=$(cat /tmp/token) \
+                            --validate=false \
                             apply -f k8s/
                     '''
                 }
