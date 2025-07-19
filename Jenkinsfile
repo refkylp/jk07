@@ -65,7 +65,14 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f k8s/'
+                withCredentials([string(credentialsId: 'kube-token', variable: 'KUBE_TOKEN')]) {
+                    sh '''
+                    echo $KUBE_TOKEN > /tmp/token
+                    kubectl --server=${CLUSTER_URL} \
+                            --token=$(cat /tmp/token) \
+                            apply -f k8s/
+                    '''
+                }
             }
         }
     }
