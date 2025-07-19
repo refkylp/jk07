@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: phonebook
+  name: resultserver-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phonebook-result
+  template:
+    metadata:
+      labels:
+        app: phonebook-result
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: servers-secret
+        envFrom:
+        - configMapRef:
+            name: servers-cm
+        image: IMAGE_TAG_RESULT_SERVER
+        name: resultserver
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: regcred # regcred Secret, Docker registry kimlik bilgilerini içerir.
+        # Bu Secret, Docker Hub veya özel bir Docker registry (örn:ecr) için kullanılabilir.
+        # Uygulamanın çalıştığı namespace içinde oluşturulmuş olmalıdır.
+
+
