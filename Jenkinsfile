@@ -1,11 +1,10 @@
-
 pipeline {
     agent any
 
     environment {
         APP_NAME="phonebook"
         APP_REPO_NAME="jenkins-007-repo/${APP_NAME}-app"
-        AWS_REGION="us-east-1"
+        AWS_REGION="eu-west-1"
         AWS_ACCOUNT_ID=sh(script:'aws sts get-caller-identity --query Account --output text', returnStdout:true).trim()
         ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         CLUSTER_URL="https://172.31.25.200:6443" // Manuel erişim testleri yapıyorsan	EKS ya da kubeadm API URL’si girilebilir
