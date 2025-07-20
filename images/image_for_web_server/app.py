@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Once we are done with the database, we are going to create database.
 # we need to configure our database. I've explained this part before. Lets have a look at these configuration. 
 developer_name = os.environ.get("DEVELOPER_NAME", "Refia")
-app.config['MYSQL_DATABASE_HOST'] = os.environ.get("MYSQL_HOST", "mysql")
+app.config['MYSQL_DATABASE_HOST'] = os.environ.get("MYSQL_HOST", "mysql-service")
 app.config['MYSQL_DATABASE_USER'] = os.environ.get("MYSQL_USER", "admin")
 app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get("MYSQL_PASSWORD", "admin123")
 app.config['MYSQL_DATABASE_DB'] = os.environ.get("MYSQL_DB", "phonebook_db")
