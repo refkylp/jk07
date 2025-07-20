@@ -24,7 +24,7 @@ spec:
         envFrom:
         - configMapRef:
             name: servers-cm
-        image: IMAGE_TAG_WEB_SERVER
+        image: ${WEB_IMAGE}
         name: webserver
         ports:
         - containerPort: 80
