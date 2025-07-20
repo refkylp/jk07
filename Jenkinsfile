@@ -11,9 +11,9 @@ pipeline {
     stages {
         stage('Create ECR Repositories') {
             steps {
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws-creds' // Credential ID
+                withCredentials([[ 
+                    $class: 'AmazonWebServicesCredentialsBinding', 
+                    credentialsId: 'aws-creds' 
                 ]]) {
                     script {
                         def AWS_ACCOUNT_ID = sh(script: 'aws sts get-caller-identity --query Account --output text', returnStdout: true).trim()
@@ -38,9 +38,9 @@ pipeline {
 
         stage('Build and Push Docker Images') {
             steps {
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws-creds'
+                withCredentials([[ 
+                    $class: 'AmazonWebServicesCredentialsBinding', 
+                    credentialsId: 'aws-creds' 
                 ]]) {
                     script {
                         def AWS_ACCOUNT_ID = sh(script: 'aws sts get-caller-identity --query Account --output text', returnStdout: true).trim()
@@ -58,8 +58,24 @@ pipeline {
                             docker push ${image_tag}
                             """
                         }
+
+                        // Export image tags to be used in envsubst
+                        env.RESULT_IMAGE = "${ECR_REGISTRY}/jenkins-007-repo/${APP_NAME}-result_server:latest"
+                        env.WEB_IMAGE = "${ECR_REGISTRY}/jenkins-007-repo/${APP_NAME}-web_server:latest"
                     }
                 }
+            }
+        }
+
+        stage('Generate Final Kubernetes YAMLs') {
+            steps {
+                sh """
+                mkdir -p k8s/generated
+                export RESULT_IMAGE=${RESULT_IMAGE}
+                export WEB_IMAGE=${WEB_IMAGE}
+                envsubst < k8s/templates/resultserver-deployment.yaml.template > k8s/generated/resultserver-deployment.yaml
+                envsubst < k8s/templates/webserver-deployment.yaml.template > k8s/generated/webserver-deployment.yaml
+                """
             }
         }
 
@@ -72,18 +88,10 @@ pipeline {
                             --token=$(cat /tmp/token) \
                             --insecure-skip-tls-verify=true \
                             --validate=false \
-                            apply -f k8s/
+                            apply -f k8s/generated/
                     '''
                 }
             }
         }
     }
 }
-
-
-    // post {
-    //     always {
-    //         echo 'Deleting all local images'
-    //         sh 'docker image prune -af'
-    //     }
-    // }
