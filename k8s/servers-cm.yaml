@@ -5,6 +5,7 @@ data:
   # MYSQL_ROOT_PASSWORD: admin123
   MYSQL_DATABASE_HOST: mysql-service
   MYSQL_USER: admin
+  MYSQL_PORT: 3306
 kind: ConfigMap
 metadata:
   name: servers-cm
