@@ -2,7 +2,7 @@
 # As we know, we are gonna import necessary libraries. We've also imported 
 from flask import Flask, request, render_template
 from flaskext.mysql import MySQL
-
+import os
 # Create an object named app
 app = Flask(__name__)
 
@@ -10,12 +10,12 @@ app = Flask(__name__)
 
 # Once we are done with the database, we are going to create database.
 # we need to configure our database. I've explained this part before. Lets have a look at these configuration. 
-developer_name = "{{ developer_name }}"
-app.config['MYSQL_DATABASE_HOST'] = "<private_ip of db_server>"
-app.config['MYSQL_DATABASE_USER'] = 'remoteUser'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'cloud123'
-app.config['MYSQL_DATABASE_DB'] = 'phonebook_db'
-app.config['MYSQL_DATABASE_PORT'] = 3306
+developer_name = os.environ.get("DEVELOPER_NAME", "Refia")
+app.config['MYSQL_DATABASE_HOST'] = os.environ.get("MYSQL_HOST", "mysql")
+app.config['MYSQL_DATABASE_USER'] = os.environ.get("MYSQL_USER", "admin")
+app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get("MYSQL_PASSWORD", "admin123")
+app.config['MYSQL_DATABASE_DB'] = os.environ.get("MYSQL_DB", "phonebook_db")
+app.config['MYSQL_DATABASE_PORT'] = int(os.environ.get("MYSQL_PORT", "3306"))
 # db_endpoint.close()
 mysql = MySQL() # We are using this function to initialize mysql 
 mysql.init_app(app) 
